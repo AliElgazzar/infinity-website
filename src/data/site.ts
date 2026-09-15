@@ -1,5 +1,17 @@
 import type { Certification, ContactInfo, NavItem, Stat } from "@/types";
 
+const DEFAULT_SITE_URL = "https://infinityesc.com";
+
+function resolveSiteUrl(value: string | undefined): string {
+  const candidate = value?.trim();
+  if (!candidate) return DEFAULT_SITE_URL;
+  try {
+    return new URL(candidate).origin;
+  } catch {
+    return DEFAULT_SITE_URL;
+  }
+}
+
 /**
  * Centralized site configuration for Infinity Engineering Services.
  * Values below are verified against the existing infinityesc.com content unless marked TODO.
@@ -10,7 +22,7 @@ export const siteConfig = {
   tagline: "Industrial Automation & Engineering",
   description:
     "Infinity Engineering Services designs and delivers intelligent automation, material-handling, controls, and manufacturing solutions built for performance.",
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://infinityesc.com",
+  url: resolveSiteUrl(process.env.NEXT_PUBLIC_SITE_URL),
   foundedYear: 2021,
   logo: {
     src: "/logos/infinity-logo.png",

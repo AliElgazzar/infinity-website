@@ -1,4 +1,5 @@
 import { type ClassValue, clsx } from "clsx";
+import { siteConfig } from "@/data/site";
 
 /** Lightweight className merger without pulling in a heavy utility stack. */
 export function cn(...inputs: ClassValue[]): string {
@@ -6,7 +7,7 @@ export function cn(...inputs: ClassValue[]): string {
 }
 
 export function absoluteUrl(path = ""): string {
-  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://infinityesc.com";
+  const base = siteConfig.url;
   if (!path) return base;
   return `${base.replace(/\/$/, "")}${path.startsWith("/") ? path : `/${path}`}`;
 }
