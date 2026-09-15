@@ -25,7 +25,7 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteConfig.url),
+  metadataBase: new URL(siteConfig.url || "https://infinityesc.com"),
   title: {
     default: `${siteConfig.name} | Industrial Automation & Engineering`,
     template: `%s | ${siteConfig.name}`,
