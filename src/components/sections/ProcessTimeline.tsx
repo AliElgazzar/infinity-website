@@ -1,35 +1,68 @@
 "use client";
 
-import { motion, useReducedMotion } from "motion/react";
+import { useEffect, useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { processSteps } from "@/data/process";
 import { Container } from "@/components/ui/Container";
+import { cn } from "@/lib/utils";
 
-const ease = [0.22, 1, 0.36, 1] as const;
+const CYCLE_MS = 4200;
+const ease = [0.16, 1, 0.3, 1] as const;
 
 export function ProcessTimeline() {
   const reduceMotion = useReducedMotion();
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const active = processSteps[activeIndex] ?? processSteps[0];
+
+  useEffect(() => {
+    if (reduceMotion || paused || processSteps.length < 2) return;
+    const id = window.setInterval(() => {
+      setActiveIndex((prev) => (prev + 1) % processSteps.length);
+    }, CYCLE_MS);
+    return () => window.clearInterval(id);
+  }, [paused, reduceMotion]);
+
+  if (!active) return null;
 
   return (
     <section
       className="relative overflow-hidden bg-[#050f16] py-20 text-white md:py-28"
       aria-labelledby="process-heading"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
     >
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 blueprint-grid opacity-15"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_80%_20%,rgba(242,140,40,0.12),transparent_45%),radial-gradient(ellipse_at_10%_80%,rgba(22,138,173,0.14),transparent_40%)]"
       />
       <div
         aria-hidden="true"
         className="absolute top-0 left-0 h-full w-[3px] bg-gradient-to-b from-orange via-electric to-transparent"
       />
 
+      {/* Giant watermark number */}
+      <AnimatePresence mode="wait">
+        <motion.p
+          key={active.number}
+          aria-hidden="true"
+          className="pointer-events-none absolute top-[8%] right-[-4%] select-none font-heading text-[clamp(10rem,28vw,22rem)] leading-none font-semibold tracking-[-0.08em] text-white/[0.035]"
+          initial={reduceMotion ? false : { opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={reduceMotion ? undefined : { opacity: 0, y: -30 }}
+          transition={{ duration: 0.45, ease }}
+        >
+          {active.number}
+        </motion.p>
+      </AnimatePresence>
+
       <Container className="relative">
         <motion.div
           className="max-w-2xl"
-          initial={reduceMotion ? false : { opacity: 0, y: 20 }}
+          initial={reduceMotion ? false : { opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.4, ease }}
+          viewport={{ once: true, amount: 0.4 }}
+          transition={{ duration: 0.5, ease }}
         >
           <p className="eyebrow text-orange">Method</p>
           <h2 id="process-heading" className="heading-section mt-3 text-white">
@@ -41,94 +74,127 @@ export function ProcessTimeline() {
           </p>
         </motion.div>
 
-        <div className="relative mt-14 md:mt-16">
-          {/* Desktop connector line that draws in */}
-          <motion.div
-            aria-hidden="true"
-            className="pointer-events-none absolute top-[2.15rem] right-0 left-0 hidden h-px origin-left bg-gradient-to-r from-orange via-electric to-orange/30 xl:block"
-            initial={reduceMotion ? false : { scaleX: 0, opacity: 0 }}
-            whileInView={{ scaleX: 1, opacity: 1 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.8, delay: 0.15, ease }}
-          />
+        <div className="mt-14 grid items-start gap-10 lg:mt-16 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
+          {/* Step rail */}
+          <ol className="relative flex flex-col" aria-label="Process steps">
+            <motion.div
+              aria-hidden="true"
+              className="absolute top-3 bottom-3 left-[11px] w-px bg-white/10 md:left-[13px]"
+              initial={reduceMotion ? false : { scaleY: 0 }}
+              whileInView={{ scaleY: 1 }}
+              viewport={{ once: true }}
+              style={{ originY: 0 }}
+              transition={{ duration: 0.7, ease }}
+            />
 
-          <motion.ol
-            className="grid gap-4 md:grid-cols-2 xl:grid-cols-3"
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.12 }}
-            variants={{
-              hidden: {},
-              show: {
-                transition: {
-                  staggerChildren: reduceMotion ? 0 : 0.08,
-                  delayChildren: reduceMotion ? 0 : 0.1,
-                },
-              },
-            }}
-          >
-            {processSteps.map((step, index) => (
-              <motion.li
-                key={step.id}
-                variants={{
-                  hidden: reduceMotion
-                    ? { opacity: 1, y: 0 }
-                    : { opacity: 0, y: 28, scale: 0.96 },
-                  show: {
-                    opacity: 1,
-                    y: 0,
-                    scale: 1,
-                    transition: { duration: 0.42, ease },
-                  },
-                }}
-                className="group relative"
-              >
-                <article className="relative h-full overflow-hidden border border-white/10 bg-white/[0.03] p-6 transition duration-300 hover:-translate-y-1.5 hover:border-orange/45 hover:bg-white/[0.055] hover:shadow-[0_18px_50px_rgba(6,26,38,0.45)] md:p-7">
-                  {/* Orange sweep on hover */}
-                  <div
-                    aria-hidden="true"
-                    className="pointer-events-none absolute inset-x-0 top-0 h-[2px] origin-left scale-x-0 bg-gradient-to-r from-orange to-electric transition duration-500 group-hover:scale-x-100"
-                  />
-
-                  <div className="flex items-start justify-between gap-4">
-                    <motion.span
-                      className="font-mono-tech text-sm text-orange"
-                      initial={reduceMotion ? false : { opacity: 0 }}
-                      whileInView={{ opacity: 1 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: 0.2 + index * 0.06, duration: 0.3 }}
-                    >
-                      {step.number}
-                    </motion.span>
-
-                    {/* Step node for the connector */}
-                    <span
-                      aria-hidden="true"
-                      className="relative mt-1 hidden size-2.5 shrink-0 rounded-full border border-orange/70 bg-[#050f16] xl:block"
-                    >
-                      <span className="absolute inset-0 rounded-full bg-orange/40 opacity-0 transition group-hover:animate-ping group-hover:opacity-100" />
-                      <span className="absolute inset-[2px] rounded-full bg-orange transition group-hover:scale-110" />
-                    </span>
-                  </div>
-
-                  <h3 className="mt-3 font-heading text-xl transition duration-300 group-hover:text-orange md:text-2xl">
-                    {step.title}
-                  </h3>
-                  <p className="mt-3 text-sm leading-relaxed text-white/68 md:text-base">
-                    {step.description}
-                  </p>
-
-                  {/* Bottom index watermark */}
-                  <span
-                    aria-hidden="true"
-                    className="pointer-events-none absolute right-3 bottom-1 select-none font-heading text-5xl font-semibold text-white/[0.03] transition duration-500 group-hover:text-orange/[0.08]"
+            {processSteps.map((step, index) => {
+              const selected = index === activeIndex;
+              return (
+                <li key={step.id} className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setActiveIndex(index)}
+                    aria-current={selected ? "step" : undefined}
+                    className={cn(
+                      "group flex w-full items-center gap-4 py-3.5 text-left transition md:gap-5 md:py-4",
+                      selected ? "opacity-100" : "opacity-45 hover:opacity-80",
+                    )}
                   >
-                    {step.number}
-                  </span>
-                </article>
-              </motion.li>
-            ))}
-          </motion.ol>
+                    <span
+                      className={cn(
+                        "relative z-[1] flex size-6 shrink-0 items-center justify-center rounded-full border transition duration-300 md:size-7",
+                        selected
+                          ? "border-orange bg-orange text-navy"
+                          : "border-white/25 bg-[#050f16] text-transparent",
+                      )}
+                    >
+                      {selected ? (
+                        <motion.span
+                          layoutId="process-dot"
+                          className="size-2 rounded-full bg-navy"
+                          transition={{ type: "spring", stiffness: 420, damping: 28 }}
+                        />
+                      ) : (
+                        <span className="size-1.5 rounded-full bg-white/35" />
+                      )}
+                    </span>
+
+                    <span className="min-w-0 flex-1">
+                      <span className="flex items-baseline gap-3">
+                        <span
+                          className={cn(
+                            "font-mono-tech text-[0.65rem] tracking-[0.16em]",
+                            selected ? "text-orange" : "text-white/35",
+                          )}
+                        >
+                          {step.number}
+                        </span>
+                        <span
+                          className={cn(
+                            "font-heading text-lg transition md:text-xl",
+                            selected ? "text-white" : "text-white/70",
+                          )}
+                        >
+                          {step.title}
+                        </span>
+                      </span>
+                    </span>
+                  </button>
+
+                  {selected && !reduceMotion ? (
+                    <motion.div
+                      className="absolute bottom-0 left-10 right-0 h-px origin-left bg-orange/50 md:left-12"
+                      initial={{ scaleX: 0 }}
+                      animate={{ scaleX: 1 }}
+                      transition={{ duration: CYCLE_MS / 1000, ease: "linear" }}
+                      key={`progress-${step.id}-${activeIndex}`}
+                    />
+                  ) : null}
+                </li>
+              );
+            })}
+          </ol>
+
+          {/* Active stage stage */}
+          <div className="relative min-h-[280px] overflow-hidden border border-white/10 bg-white/[0.03] p-7 md:min-h-[320px] md:p-10">
+            <div
+              aria-hidden="true"
+              className="absolute top-0 left-0 h-full w-[3px] bg-gradient-to-b from-orange to-electric"
+            />
+
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={active.id}
+                initial={reduceMotion ? false : { opacity: 0, x: 28, filter: "blur(6px)" }}
+                animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+                exit={reduceMotion ? undefined : { opacity: 0, x: -20, filter: "blur(4px)" }}
+                transition={{ duration: 0.4, ease }}
+              >
+                <p className="font-mono-tech text-sm text-orange">{active.number} / 0{processSteps.length}</p>
+                <h3 className="mt-4 font-heading text-[clamp(2.4rem,5vw,4rem)] leading-[0.98] tracking-[-0.04em]">
+                  {active.title}
+                </h3>
+                <p className="mt-6 max-w-lg text-base leading-relaxed text-white/70 md:text-lg">
+                  {active.description}
+                </p>
+
+                <div className="mt-10 flex items-center gap-3">
+                  {processSteps.map((step, index) => (
+                    <button
+                      key={step.id}
+                      type="button"
+                      aria-label={`Go to ${step.title}`}
+                      onClick={() => setActiveIndex(index)}
+                      className={cn(
+                        "h-1 flex-1 transition duration-300",
+                        index === activeIndex ? "bg-orange" : "bg-white/15 hover:bg-white/30",
+                      )}
+                    />
+                  ))}
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
         </div>
       </Container>
     </section>
