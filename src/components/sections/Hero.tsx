@@ -122,13 +122,15 @@ export function Hero() {
 
           <motion.h1
             id="hero-heading"
-            initial={reduceMotion ? false : { opacity: 0, y: 14 }}
+            initial={reduceMotion ? false : { opacity: 0, y: 22 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.32, delay: 0.06 }}
+            transition={{ duration: 0.5, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
             className="heading-display"
           >
             Engineering motion.
-            <span className="mt-1 block text-electric">Automating possibility.</span>
+            <span className="mt-1 block bg-gradient-to-r from-electric to-[#7ad4ea] bg-clip-text text-transparent">
+              Automating possibility.
+            </span>
           </motion.h1>
 
           <motion.p

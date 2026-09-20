@@ -1,6 +1,11 @@
+"use client";
+
 import Image from "next/image";
+import { motion, useReducedMotion } from "motion/react";
 import { Container } from "@/components/ui/Container";
 import { cn } from "@/lib/utils";
+
+const ease = [0.16, 1, 0.3, 1] as const;
 
 type PageHeroProps = {
   eyebrow: string;
@@ -19,6 +24,8 @@ export function PageHero({
   imageAlt = "",
   className,
 }: PageHeroProps) {
+  const reduceMotion = useReducedMotion();
+
   return (
     <section
       className={cn(
@@ -44,9 +51,15 @@ export function PageHero({
       />
 
       <Container className="relative z-[2]">
-        <p className="eyebrow text-orange">{eyebrow}</p>
-        <h1 className="heading-display mt-4 max-w-4xl">{title}</h1>
-        <p className="body-copy mt-5 max-w-2xl text-white/72">{description}</p>
+        <motion.div
+          initial={reduceMotion ? false : { opacity: 0, y: 28 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.55, ease }}
+        >
+          <p className="eyebrow text-orange">{eyebrow}</p>
+          <h1 className="heading-display mt-4 max-w-4xl">{title}</h1>
+          <p className="body-copy mt-5 max-w-2xl text-white/72">{description}</p>
+        </motion.div>
       </Container>
     </section>
   );

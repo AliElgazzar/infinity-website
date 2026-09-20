@@ -88,15 +88,19 @@ export function Header() {
             role="dialog"
             aria-modal="true"
             aria-label="Mobile navigation"
-            initial={reduceMotion ? false : { opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={reduceMotion ? undefined : { opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            initial={reduceMotion ? false : { opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={reduceMotion ? undefined : { opacity: 0, y: 12 }}
+            transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
             className="fixed inset-0 z-[200] flex flex-col bg-[#061A26] lg:hidden"
           >
             <div
               aria-hidden="true"
               className="pointer-events-none absolute inset-0 blueprint-grid opacity-25"
+            />
+            <div
+              aria-hidden="true"
+              className="absolute top-0 left-0 h-full w-[3px] bg-gradient-to-b from-orange to-electric"
             />
 
             <div className="relative z-10 flex h-[4.75rem] items-center justify-between border-b border-white/10 px-4 sm:px-6">
@@ -117,7 +121,7 @@ export function Header() {
               <button
                 ref={closeButtonRef}
                 type="button"
-                className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md border border-white/25 bg-white/5 text-white"
+                className="inline-flex min-h-11 min-w-11 items-center justify-center border border-white/25 bg-white/5 text-white"
                 aria-label="Close menu"
                 onClick={() => {
                   closeMenu();
@@ -134,22 +138,28 @@ export function Header() {
                 {mainNav.map((item, index) => {
                   const active = isActive(item.href);
                   return (
-                    <Link
+                    <motion.div
                       key={item.href}
-                      href={item.href}
-                      className="flex min-h-14 items-center justify-between border-b border-white/15 py-4 font-heading text-[1.85rem] leading-none"
-                      style={{ color: active ? "#F28C28" : "#FFFFFF" }}
-                      aria-current={active ? "page" : undefined}
-                      onClick={closeMenu}
+                      initial={reduceMotion ? false : { opacity: 0, x: -16 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.05 + index * 0.04, duration: 0.3 }}
                     >
-                      <span className="pr-4">{item.label}</span>
-                      <span
-                        className="shrink-0 font-mono-tech text-xs tracking-[0.16em]"
-                        style={{ color: "rgba(255,255,255,0.4)" }}
+                      <Link
+                        href={item.href}
+                        className="flex min-h-14 items-center justify-between border-b border-white/15 py-4 font-heading text-[1.85rem] leading-none"
+                        style={{ color: active ? "#F28C28" : "#FFFFFF" }}
+                        aria-current={active ? "page" : undefined}
+                        onClick={closeMenu}
                       >
-                        0{index + 1}
-                      </span>
-                    </Link>
+                        <span className="pr-4">{item.label}</span>
+                        <span
+                          className="shrink-0 font-mono-tech text-xs tracking-[0.16em]"
+                          style={{ color: "rgba(255,255,255,0.4)" }}
+                        >
+                          0{index + 1}
+                        </span>
+                      </Link>
+                    </motion.div>
                   );
                 })}
               </nav>

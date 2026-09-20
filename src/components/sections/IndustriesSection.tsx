@@ -3,13 +3,17 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ArrowUpRight } from "lucide-react";
 import { industries } from "@/data/industries";
 import { services } from "@/data/services";
 import { Container } from "@/components/ui/Container";
 import { cn } from "@/lib/utils";
 
+const ease = [0.16, 1, 0.3, 1] as const;
+
 export function IndustriesSection() {
+  const reduceMotion = useReducedMotion();
   const [activeId, setActiveId] = useState(industries[0]?.id ?? "");
   const active = industries.find((item) => item.id === activeId) ?? industries[0];
 
@@ -22,7 +26,13 @@ export function IndustriesSection() {
   return (
     <section className="bg-off-white py-16 md:py-24" aria-labelledby="industries-heading">
       <Container>
-        <div className="mb-10 max-w-3xl">
+        <motion.div
+          className="mb-10 max-w-3xl md:mb-12"
+          initial={reduceMotion ? false : { opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.45, ease }}
+        >
           <p className="eyebrow text-orange">Industries</p>
           <h2 id="industries-heading" className="heading-section mt-3 text-navy">
             Where industrial systems have to perform.
@@ -31,9 +41,9 @@ export function IndustriesSection() {
             Sector focus drawn from Infinity’s published capabilities, certifications, and
             service context.
           </p>
-        </div>
+        </motion.div>
 
-        <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:gap-10">
+        <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:gap-12">
           <div role="tablist" aria-label="Industry categories" className="flex flex-col">
             {industries.map((industry, index) => {
               const selected = industry.id === active.id;
@@ -44,11 +54,18 @@ export function IndustriesSection() {
                   role="tab"
                   aria-selected={selected}
                   className={cn(
-                    "group flex min-h-14 items-center gap-5 border-b border-navy/10 py-4 text-left transition",
+                    "group relative flex min-h-14 items-center gap-5 border-b border-navy/10 py-4 text-left transition",
                     selected ? "border-orange" : "hover:border-navy/25",
                   )}
                   onClick={() => setActiveId(industry.id)}
                 >
+                  {selected ? (
+                    <motion.span
+                      layoutId="industry-rail"
+                      className="absolute top-0 bottom-0 left-0 w-[3px] bg-orange"
+                      transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                    />
+                  ) : null}
                   <span
                     className={cn(
                       "font-mono-tech text-xs",
@@ -70,44 +87,54 @@ export function IndustriesSection() {
             })}
           </div>
 
-          <div role="tabpanel">
-            <div className="media-frame relative aspect-[16/10]">
-              <Image
-                src={active.image}
-                alt={active.imageAlt}
-                fill
-                sizes="(max-width: 1024px) 100vw, 55vw"
-                className="object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-navy/80 via-navy/20 to-transparent" />
-              <div className="absolute right-5 bottom-5 left-5">
-                <p className="font-mono-tech text-[0.65rem] text-orange uppercase">
-                  Active sector
-                </p>
-                <p className="mt-1 font-heading text-2xl text-white md:text-3xl">
-                  {active.title}
-                </p>
-              </div>
-            </div>
-            <p className="mt-5 text-steel-gray md:text-lg">{active.description}</p>
-            <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2">
-              {related.map((service) => (
+          <div role="tabpanel" className="relative min-h-[420px]">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={active.id}
+                initial={reduceMotion ? false : { opacity: 0, y: 18, filter: "blur(4px)" }}
+                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                exit={reduceMotion ? undefined : { opacity: 0, y: -12, filter: "blur(3px)" }}
+                transition={{ duration: 0.35, ease }}
+              >
+                <div className="media-frame relative aspect-[16/10] overflow-hidden">
+                  <Image
+                    src={active.image}
+                    alt={active.imageAlt}
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 55vw"
+                    className="object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-navy/85 via-navy/25 to-transparent" />
+                  <div className="absolute right-5 bottom-5 left-5">
+                    <p className="font-mono-tech text-[0.65rem] text-orange uppercase">
+                      Active sector
+                    </p>
+                    <p className="mt-1 font-heading text-2xl text-white md:text-3xl">
+                      {active.title}
+                    </p>
+                  </div>
+                </div>
+                <p className="mt-5 text-steel-gray md:text-lg">{active.description}</p>
+                <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2">
+                  {related.map((service) => (
+                    <Link
+                      key={service.id}
+                      href={`/services#${service.slug}`}
+                      className="inline-flex min-h-10 items-center border-b border-navy/15 text-sm text-navy transition hover:border-orange hover:text-orange"
+                    >
+                      {service.title}
+                    </Link>
+                  ))}
+                </div>
                 <Link
-                  key={service.id}
-                  href={`/services#${service.slug}`}
-                  className="inline-flex min-h-10 items-center border-b border-navy/15 text-sm text-navy transition hover:border-orange hover:text-orange"
+                  href="/industries"
+                  className="mt-6 inline-flex min-h-11 items-center gap-2 font-heading font-semibold text-steel transition hover:text-orange"
                 >
-                  {service.title}
+                  Explore all industries
+                  <ArrowUpRight className="size-4" aria-hidden="true" />
                 </Link>
-              ))}
-            </div>
-            <Link
-              href="/industries"
-              className="mt-6 inline-flex min-h-11 items-center gap-2 font-heading font-semibold text-steel transition hover:text-orange"
-            >
-              Explore all industries
-              <ArrowUpRight className="size-4" aria-hidden="true" />
-            </Link>
+              </motion.div>
+            </AnimatePresence>
           </div>
         </div>
       </Container>

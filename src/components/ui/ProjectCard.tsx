@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
@@ -25,19 +27,25 @@ export function ProjectCard({ project, className, featured = false }: ProjectCar
       <Link href={`/projects/${project.slug}`} className="absolute inset-0 z-10">
         <span className="sr-only">View project: {project.title}</span>
       </Link>
-      <div className="absolute inset-0">
+      <div className="absolute inset-0 overflow-hidden">
         <Image
           src={project.image}
           alt={project.imageAlt}
           fill
           sizes="(max-width: 768px) 100vw, 50vw"
-          className="object-cover transition duration-[400ms] group-hover:scale-105"
+          className="object-cover transition duration-600 ease-out group-hover:scale-110"
         />
       </div>
-      <div className="absolute inset-0 bg-gradient-to-t from-navy via-navy/70 to-navy/15" />
+      <div className="absolute inset-0 bg-gradient-to-t from-navy via-navy/70 to-navy/10 transition duration-400 group-hover:via-navy/60" />
       <div
         aria-hidden="true"
-        className="absolute top-0 left-0 z-[1] h-full w-[3px] origin-top scale-y-50 bg-orange transition duration-300 group-hover:scale-y-100"
+        className="absolute inset-0 opacity-0 transition duration-500 group-hover:opacity-100"
+      >
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom,rgba(242,140,40,0.22),transparent_55%)]" />
+      </div>
+      <div
+        aria-hidden="true"
+        className="absolute top-0 left-0 z-[1] h-full w-[3px] origin-top scale-y-40 bg-orange transition duration-400 group-hover:scale-y-100"
       />
       <div className="relative z-[1] flex h-full flex-col justify-end p-6 md:p-8">
         <div className="mb-4 flex flex-wrap items-center gap-2 font-mono-tech text-[0.62rem] uppercase">
@@ -58,7 +66,7 @@ export function ProjectCard({ project, className, featured = false }: ProjectCar
         </p>
         <span className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-white transition group-hover:gap-3 group-hover:text-orange">
           View project
-          <ArrowUpRight className="size-4" aria-hidden="true" />
+          <ArrowUpRight className="size-4 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
         </span>
       </div>
     </article>
