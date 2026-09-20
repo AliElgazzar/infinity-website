@@ -1,13 +1,19 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, Linkedin, Mail, MapPin, Phone } from "lucide-react";
+import { motion, useReducedMotion } from "motion/react";
 import { certifications, contactInfo, mainNav, siteConfig } from "@/data/site";
 import { services } from "@/data/services";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { currentYear } from "@/lib/utils";
 
+const ease = [0.16, 1, 0.3, 1] as const;
+
 export function Footer() {
+  const reduceMotion = useReducedMotion();
   const ignition = certifications.find((item) => item.id === "ignition");
 
   return (
@@ -17,9 +23,19 @@ export function Footer() {
         className="absolute top-0 left-0 h-full w-[3px] bg-gradient-to-b from-orange to-electric"
       />
       <div className="noise-overlay opacity-[0.03]" />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(242,140,40,0.1),transparent_40%),radial-gradient(ellipse_at_bottom_left,rgba(22,138,173,0.14),transparent_45%)]"
+      />
 
       <Container className="relative py-16 md:py-20">
-        <div className="mb-14 flex flex-col gap-6 border-b border-white/10 pb-12 lg:flex-row lg:items-end lg:justify-between">
+        <motion.div
+          className="mb-14 flex flex-col gap-6 border-b border-white/10 pb-12 lg:flex-row lg:items-end lg:justify-between"
+          initial={reduceMotion ? false : { opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.4 }}
+          transition={{ duration: 0.5, ease }}
+        >
           <div className="max-w-2xl">
             <Image
               src={siteConfig.logo.src}
@@ -36,16 +52,21 @@ export function Footer() {
             Start a Project
             <ArrowUpRight className="size-4" aria-hidden="true" />
           </Button>
-        </div>
+        </motion.div>
 
         <div className="grid gap-12 lg:grid-cols-[1.15fr_0.7fr_0.7fr_1fr]">
-          <div>
+          <motion.div
+            initial={reduceMotion ? false : { opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4, ease }}
+          >
             <p className="body-copy max-w-md text-sm text-white/60 md:text-base">
               Full-scope industrial automation and engineering — from design and controls to
               commissioning and on-site support.
             </p>
             {ignition?.image ? (
-              <div className="mt-6 inline-flex items-center gap-4 border border-white/10 bg-white px-4 py-3">
+              <div className="mt-6 inline-flex items-center gap-4 border border-white/10 bg-white px-4 py-3 transition hover:border-orange/40">
                 <Image
                   src={ignition.image}
                   alt={ignition.imageAlt ?? ignition.title}
@@ -61,7 +82,7 @@ export function Footer() {
                 </div>
               </div>
             ) : null}
-          </div>
+          </motion.div>
 
           <div>
             <h3 className="eyebrow text-orange">Navigate</h3>

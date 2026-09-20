@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { projects } from "@/data/projects";
 import { industries } from "@/data/industries";
 import { services } from "@/data/services";
@@ -9,7 +10,10 @@ import { cn } from "@/lib/utils";
 
 type FilterKey = "all" | string;
 
+const ease = [0.16, 1, 0.3, 1] as const;
+
 export function ProjectFilters() {
+  const reduceMotion = useReducedMotion();
   const [industry, setIndustry] = useState<FilterKey>("all");
   const [service, setService] = useState<FilterKey>("all");
   const [technology, setTechnology] = useState<FilterKey>("all");
@@ -37,7 +41,13 @@ export function ProjectFilters() {
 
   return (
     <div>
-      <div className="space-y-6 border border-navy/10 bg-white p-5 md:p-7">
+      <motion.div
+        className="space-y-6 border border-navy/10 bg-white p-5 md:p-7"
+        initial={reduceMotion ? false : { opacity: 0, y: 16 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.4, ease }}
+      >
         <FilterRow
           label="Industry"
           value={industry}
@@ -65,10 +75,13 @@ export function ProjectFilters() {
             ...technologies.map((tech) => ({ value: tech, label: tech })),
           ]}
         />
-      </div>
+      </motion.div>
 
       <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
-        <p className="font-mono-tech text-[0.65rem] tracking-[0.14em] text-muted uppercase" aria-live="polite">
+        <p
+          className="font-mono-tech text-[0.65rem] tracking-[0.14em] text-muted uppercase"
+          aria-live="polite"
+        >
           {filtered.length} project{filtered.length === 1 ? "" : "s"}
         </p>
         {hasFilters ? (
@@ -83,9 +96,20 @@ export function ProjectFilters() {
       </div>
 
       <div className="mt-6 grid gap-4 md:grid-cols-2">
-        {filtered.map((project) => (
-          <ProjectCard key={project.id} project={project} />
-        ))}
+        <AnimatePresence mode="popLayout">
+          {filtered.map((project) => (
+            <motion.div
+              key={project.id}
+              layout
+              initial={reduceMotion ? false : { opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={reduceMotion ? undefined : { opacity: 0, scale: 0.98 }}
+              transition={{ duration: 0.3, ease }}
+            >
+              <ProjectCard project={project} />
+            </motion.div>
+          ))}
+        </AnimatePresence>
       </div>
 
       {filtered.length === 0 ? (
@@ -123,7 +147,7 @@ function FilterRow({
               type="button"
               onClick={() => onChange(option.value)}
               className={cn(
-                "min-h-10 border px-3.5 text-sm transition",
+                "relative min-h-10 border px-3.5 text-sm transition",
                 active
                   ? "border-navy bg-navy text-white"
                   : "border-navy/12 bg-off-white text-navy hover:border-orange hover:text-orange",

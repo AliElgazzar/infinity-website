@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { motion } from "motion/react";
 import { services } from "@/data/services";
 import { Container } from "@/components/ui/Container";
 import { cn } from "@/lib/utils";
@@ -117,13 +118,14 @@ export function ServicesNav() {
                   <span className="whitespace-nowrap font-heading font-medium tracking-tight">
                     {service.title}
                   </span>
-                  <span
-                    aria-hidden="true"
-                    className={cn(
-                      "absolute inset-x-3 bottom-0 h-0.5 origin-left bg-orange transition duration-300",
-                      active ? "scale-x-100" : "scale-x-0",
-                    )}
-                  />
+                  {active ? (
+                    <motion.span
+                      layoutId="services-nav-underline"
+                      aria-hidden="true"
+                      className="absolute inset-x-3 bottom-0 h-0.5 bg-orange"
+                      transition={{ type: "spring", stiffness: 420, damping: 34 }}
+                    />
+                  ) : null}
                 </a>
               );
             })}

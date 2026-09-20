@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
 import { contactFormSchema, serviceNeededOptions } from "@/lib/contact-schema";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
@@ -239,15 +240,30 @@ export function ContactForm() {
       </Button>
 
       {state.status === "success" ? (
-        <p className="border border-electric/30 bg-electric/10 px-4 py-3 text-sm text-navy" role="status">
+        <motion.p
+          className="border border-electric/30 bg-electric/10 px-4 py-3 text-sm text-navy"
+          role="status"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35 }}
+        >
           {state.message}
-        </p>
+        </motion.p>
       ) : null}
-      {state.status === "error" ? (
-        <p className="border border-orange/40 bg-orange/10 px-4 py-3 text-sm text-navy" role="alert">
-          {state.message}
-        </p>
-      ) : null}
+      <AnimatePresence>
+        {state.status === "error" ? (
+          <motion.p
+            className="border border-orange/40 bg-orange/10 px-4 py-3 text-sm text-navy"
+            role="alert"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            {state.message}
+          </motion.p>
+        ) : null}
+      </AnimatePresence>
     </form>
   );
 }
