@@ -46,53 +46,75 @@ const frames = [
 
 export function ImageBand() {
   const reduceMotion = useReducedMotion();
+  const loop = [...frames, ...frames];
 
   return (
-    <section className="bg-navy py-16 text-white md:py-20" aria-labelledby="gallery-heading">
+    <section
+      className="relative overflow-hidden bg-[#050f16] py-16 text-white md:py-20"
+      aria-labelledby="gallery-heading"
+    >
+      <div
+        aria-hidden="true"
+        className="absolute top-0 left-0 h-full w-[3px] bg-gradient-to-b from-orange to-electric"
+      />
+
       <Container>
         <motion.div
-          className="mb-8 max-w-2xl md:mb-10"
+          className="mb-8 flex flex-col gap-3 md:mb-10 md:flex-row md:items-end md:justify-between"
           initial={reduceMotion ? false : { opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.45, ease }}
         >
-          <p className="eyebrow text-orange">In the field</p>
-          <h2 id="gallery-heading" className="heading-section mt-3">
-            Environments we engineer for.
-          </h2>
+          <div className="max-w-2xl">
+            <p className="eyebrow text-orange">In the field</p>
+            <h2 id="gallery-heading" className="heading-section mt-3">
+              Environments we engineer for.
+            </h2>
+          </div>
+          <p className="max-w-xs font-mono-tech text-[0.62rem] tracking-[0.16em] text-white/40 uppercase md:text-right">
+            Hover to pause · Real facility contexts
+          </p>
         </motion.div>
       </Container>
 
-      <div className="grid grid-cols-2 gap-1 md:grid-cols-4 lg:grid-cols-7">
-        {frames.map((frame, index) => (
-          <motion.figure
-            key={frame.src}
-            className="group relative aspect-[3/4] overflow-hidden bg-navy"
-            initial={reduceMotion ? false : { opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.5, delay: Math.min(index * 0.05, 0.3), ease }}
-          >
-            <Image
-              src={frame.src}
-              alt={frame.alt}
-              fill
-              sizes="(max-width: 768px) 50vw, 14vw"
-              className="object-cover transition duration-600 group-hover:scale-110"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-navy via-navy/20 to-transparent opacity-90 transition duration-400 group-hover:opacity-100" />
-            <div
-              aria-hidden="true"
-              className="absolute inset-x-0 top-0 h-0 bg-orange/80 transition-all duration-400 group-hover:h-1"
-            />
-            <figcaption className="absolute inset-x-0 bottom-0 translate-y-1 px-3 pt-10 pb-3 transition duration-400 group-hover:translate-y-0">
-              <span className="font-mono-tech text-[0.6rem] tracking-[0.14em] text-orange uppercase">
-                {frame.label}
-              </span>
-            </figcaption>
-          </motion.figure>
-        ))}
+      <div className="marquee-paused relative">
+        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-12 bg-gradient-to-r from-[#050f16] to-transparent md:w-20" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-12 bg-gradient-to-l from-[#050f16] to-transparent md:w-20" />
+
+        <div
+          className={`marquee-track flex w-max gap-2 ${reduceMotion ? "" : ""}`}
+          style={{ animationDuration: "55s" }}
+        >
+          {loop.map((frame, index) => {
+            const isDuplicate = index >= frames.length;
+            return (
+              <figure
+                key={`${frame.src}-${index}`}
+                className="group relative h-[280px] w-[210px] shrink-0 overflow-hidden md:h-[360px] md:w-[270px]"
+                aria-hidden={isDuplicate}
+              >
+                <Image
+                  src={frame.src}
+                  alt={isDuplicate ? "" : frame.alt}
+                  fill
+                  sizes="270px"
+                  className="object-cover transition duration-700 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-navy via-navy/25 to-transparent opacity-90" />
+                <div
+                  aria-hidden="true"
+                  className="absolute inset-x-0 top-0 h-0 bg-orange transition-all duration-400 group-hover:h-1"
+                />
+                <figcaption className="absolute inset-x-0 bottom-0 px-4 pb-4">
+                  <span className="font-mono-tech text-[0.6rem] tracking-[0.16em] text-orange uppercase">
+                    {frame.label}
+                  </span>
+                </figcaption>
+              </figure>
+            );
+          })}
+        </div>
       </div>
     </section>
   );

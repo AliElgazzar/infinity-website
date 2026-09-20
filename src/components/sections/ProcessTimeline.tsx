@@ -155,30 +155,38 @@ export function ProcessTimeline() {
             })}
           </ol>
 
-          {/* Active stage stage */}
-          <div className="relative min-h-[280px] overflow-hidden border border-white/10 bg-white/[0.03] p-7 md:min-h-[320px] md:p-10">
+          {/* Active stage */}
+          <div className="relative min-h-[300px] overflow-hidden border border-white/10 bg-white/[0.03] p-7 md:min-h-[340px] md:p-10">
             <div
               aria-hidden="true"
               className="absolute top-0 left-0 h-full w-[3px] bg-gradient-to-b from-orange to-electric"
+            />
+            <div className="noise-overlay opacity-[0.04]" />
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(242,140,40,0.08),transparent_45%)]"
             />
 
             <AnimatePresence mode="wait">
               <motion.div
                 key={active.id}
+                className="relative"
                 initial={reduceMotion ? false : { opacity: 0, x: 28, filter: "blur(6px)" }}
                 animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
                 exit={reduceMotion ? undefined : { opacity: 0, x: -20, filter: "blur(4px)" }}
                 transition={{ duration: 0.4, ease }}
               >
-                <p className="font-mono-tech text-sm text-orange">{active.number} / 0{processSteps.length}</p>
-                <h3 className="mt-4 font-heading text-[clamp(2.4rem,5vw,4rem)] leading-[0.98] tracking-[-0.04em]">
+                <p className="font-mono-tech text-sm text-orange">
+                  {active.number} / 0{processSteps.length}
+                </p>
+                <h3 className="mt-4 font-heading text-[clamp(2.5rem,5.2vw,4.2rem)] leading-[0.96] tracking-[-0.045em]">
                   {active.title}
                 </h3>
                 <p className="mt-6 max-w-lg text-base leading-relaxed text-white/70 md:text-lg">
                   {active.description}
                 </p>
 
-                <div className="mt-10 flex items-center gap-3">
+                <div className="mt-10 flex items-center gap-2.5">
                   {processSteps.map((step, index) => (
                     <button
                       key={step.id}
@@ -186,10 +194,22 @@ export function ProcessTimeline() {
                       aria-label={`Go to ${step.title}`}
                       onClick={() => setActiveIndex(index)}
                       className={cn(
-                        "h-1 flex-1 transition duration-300",
-                        index === activeIndex ? "bg-orange" : "bg-white/15 hover:bg-white/30",
+                        "relative h-1.5 flex-1 overflow-hidden bg-white/12 transition",
+                        index === activeIndex ? "bg-white/20" : "hover:bg-white/25",
                       )}
-                    />
+                    >
+                      {index === activeIndex && !reduceMotion ? (
+                        <motion.span
+                          className="absolute inset-y-0 left-0 bg-orange"
+                          initial={{ width: "0%" }}
+                          animate={{ width: "100%" }}
+                          transition={{ duration: CYCLE_MS / 1000, ease: "linear" }}
+                          key={`bar-${step.id}-${activeIndex}`}
+                        />
+                      ) : index === activeIndex ? (
+                        <span className="absolute inset-0 bg-orange" />
+                      ) : null}
+                    </button>
                   ))}
                 </div>
               </motion.div>

@@ -13,13 +13,13 @@
   --surface-dark: #0a2230;
   --glow: rgba(22, 138, 173, 0.35);
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
-  --text-display: clamp(2.75rem, 6.2vw, 5.25rem);
-  --text-section: clamp(2rem, 3.8vw, 3.35rem);
-  --text-card: clamp(1.3rem, 1.7vw, 1.65rem);
-  --text-body: clamp(1.02rem, 0.2vw + 0.98rem, 1.15rem);
-  --leading-display: 1.02;
-  --leading-section: 1.08;
-  --leading-body: 1.62;
+  --text-display: clamp(2.9rem, 6.6vw, 5.65rem);
+  --text-section: clamp(2.1rem, 4vw, 3.55rem);
+  --text-card: clamp(1.35rem, 1.8vw, 1.75rem);
+  --text-body: clamp(1.04rem, 0.22vw + 0.98rem, 1.175rem);
+  --leading-display: 0.98;
+  --leading-section: 1.06;
+  --leading-body: 1.65;
 }
 
 @theme inline {
@@ -70,7 +70,8 @@ html {
   .float-slow,
   .scroll-hint-dot,
   .cta-rail,
-  .image-shine::after {
+  .image-shine::after,
+  .hero-video-drift {
     animation: none !important;
     transform: none !important;
   }
@@ -147,8 +148,9 @@ video {
 .heading-display {
   font-size: var(--text-display);
   line-height: var(--leading-display);
-  letter-spacing: -0.035em;
+  letter-spacing: -0.04em;
   font-weight: 600;
+  text-wrap: balance;
 }
 
 .heading-section {
@@ -496,4 +498,21 @@ video {
     opacity: 1;
     filter: brightness(1.25);
   }
+}
+
+@keyframes hero-drift {
+  0% {
+    transform: scale(1.02) translate3d(0, 0, 0);
+  }
+  50% {
+    transform: scale(1.08) translate3d(-1.2%, -0.6%, 0);
+  }
+  100% {
+    transform: scale(1.02) translate3d(0, 0, 0);
+  }
+}
+
+.hero-video-drift {
+  animation: hero-drift 28s ease-in-out infinite;
+  will-change: transform;
 }

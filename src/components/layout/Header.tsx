@@ -96,8 +96,13 @@ export function Header() {
           >
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute inset-0 blueprint-grid opacity-25"
+              className="pointer-events-none absolute inset-0 blueprint-grid opacity-20"
             />
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(242,140,40,0.12),transparent_40%)]"
+            />
+            <div className="noise-overlay opacity-[0.04]" />
             <div
               aria-hidden="true"
               className="absolute top-0 left-0 h-full w-[3px] bg-gradient-to-b from-orange to-electric"

@@ -21,8 +21,19 @@ export function StatsSection() {
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(22,138,173,0.12),transparent_55%)]"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(22,138,173,0.14),transparent_55%)]"
       />
+      <div className="noise-overlay opacity-[0.03]" />
+      <motion.p
+        aria-hidden="true"
+        className="pointer-events-none absolute right-[-2%] bottom-[-14%] select-none font-heading text-[clamp(6rem,18vw,16rem)] leading-none font-semibold tracking-[-0.06em] text-white/[0.03]"
+        initial={reduceMotion ? false : { opacity: 0, x: 40 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.7, ease }}
+      >
+        DATA
+      </motion.p>
 
       <Container className="relative">
         <motion.div
@@ -51,9 +62,12 @@ export function StatsSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.4 }}
               transition={{ duration: 0.45, delay: index * 0.07, ease }}
-              className="group relative overflow-hidden bg-[#071822] px-6 py-12"
+              className="group relative overflow-hidden bg-[#071822] px-6 py-12 transition hover:bg-[#0a2433]"
             >
-              <p className="font-heading text-[clamp(3rem,6vw,4.5rem)] leading-none tracking-[-0.04em] text-orange">
+              <p className="font-mono-tech text-[0.58rem] tracking-[0.18em] text-white/25 uppercase">
+                {String(index + 1).padStart(2, "0")}
+              </p>
+              <p className="mt-4 font-heading text-[clamp(3rem,6vw,4.75rem)] leading-none tracking-[-0.04em] text-orange">
                 <AnimatedCounter
                   value={stat.value}
                   suffix={stat.suffix}

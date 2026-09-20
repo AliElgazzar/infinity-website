@@ -20,8 +20,17 @@ export function ServicesGrid({
   const items = typeof limit === "number" ? services.slice(0, limit) : services;
 
   return (
-    <section className="bg-navy py-20 text-white md:py-28" aria-labelledby="services-heading">
-      <Container>
+    <section
+      className="relative overflow-hidden bg-navy py-20 text-white md:py-28"
+      aria-labelledby="services-heading"
+    >
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(22,138,173,0.12),transparent_40%)]"
+      />
+      <div className="noise-overlay opacity-[0.03]" />
+
+      <Container className="relative">
         <motion.div
           className="mb-10 flex flex-col gap-5 md:mb-14 md:flex-row md:items-end md:justify-between"
           initial={reduceMotion ? false : { opacity: 0, y: 20 }}
@@ -34,7 +43,14 @@ export function ServicesGrid({
             <h2 id="services-heading" className="heading-section mt-3">
               What we engineer.
             </h2>
-            <p className="body-copy mt-4 text-white/65">
+            <motion.div
+              className="mt-5 h-px origin-left bg-gradient-to-r from-orange to-electric"
+              initial={reduceMotion ? false : { scaleX: 0, width: 64 }}
+              whileInView={{ scaleX: 1, width: 64 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.55, delay: 0.1, ease }}
+            />
+            <p className="body-copy mt-5 text-white/65">
               From intelligent material handling to controls, commissioning, and engineering
               outsourcing — end-to-end industrial capability.
             </p>
@@ -57,9 +73,9 @@ export function ServicesGrid({
           {items.map((service, index) => (
             <motion.div
               key={service.id}
-              initial={reduceMotion ? false : { opacity: 0, x: -24 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, amount: 0.25 }}
+              initial={reduceMotion ? false : { opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
               transition={{ duration: 0.4, delay: Math.min(index * 0.04, 0.24), ease }}
             >
               <Link
@@ -67,7 +83,7 @@ export function ServicesGrid({
                 className="group grid items-stretch transition hover:bg-white/[0.03] md:grid-cols-[6.5rem_1.05fr_0.95fr]"
               >
                 <div className="flex items-center justify-between gap-4 px-1 py-6 md:flex-col md:items-start md:justify-between md:py-8">
-                  <span className="font-mono-tech text-sm text-orange transition group-hover:tracking-[0.2em]">
+                  <span className="font-mono-tech text-sm text-orange transition duration-300 group-hover:tracking-[0.22em]">
                     {service.number}
                   </span>
                   <ArrowUpRight
@@ -85,18 +101,18 @@ export function ServicesGrid({
                   </p>
                 </div>
 
-                <div className="relative min-h-[180px] overflow-hidden md:min-h-[220px]">
+                <div className="relative min-h-[180px] overflow-hidden image-shine md:min-h-[240px]">
                   <Image
                     src={service.image}
                     alt={service.imageAlt}
                     fill
                     sizes="(max-width: 768px) 100vw, 35vw"
-                    className="object-cover transition duration-500 group-hover:scale-105"
+                    className="object-cover transition duration-700 group-hover:scale-110"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-r from-navy via-navy/45 to-transparent opacity-80 transition duration-400 group-hover:opacity-45 md:from-navy/70" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-navy via-navy/45 to-transparent opacity-80 transition duration-500 group-hover:opacity-40 md:from-navy/70" />
                   <div
                     aria-hidden="true"
-                    className="absolute inset-y-0 left-0 w-0 bg-orange transition-all duration-400 group-hover:w-1"
+                    className="absolute inset-y-0 left-0 w-0 bg-orange transition-all duration-500 group-hover:w-1"
                   />
                 </div>
               </Link>

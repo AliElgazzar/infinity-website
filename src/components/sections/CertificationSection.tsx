@@ -28,12 +28,16 @@ export function CertificationSection() {
       <Container className="relative">
         <div className="grid items-center gap-10 lg:grid-cols-[0.75fr_1.25fr] lg:gap-14">
           <motion.div
-            className="mx-auto flex max-w-sm items-center justify-center bg-white p-10 md:p-12"
+            className="relative mx-auto flex max-w-sm items-center justify-center bg-white p-10 md:p-12"
             initial={reduceMotion ? false : { opacity: 0, scale: 0.92 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true, amount: 0.4 }}
             transition={{ duration: 0.5, ease }}
           >
+            <span
+              aria-hidden="true"
+              className="absolute top-0 left-0 h-full w-[3px] bg-gradient-to-b from-orange to-electric"
+            />
             {ignition.image ? (
               <Image
                 src={ignition.image}

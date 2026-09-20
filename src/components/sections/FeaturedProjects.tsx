@@ -17,8 +17,13 @@ export function FeaturedProjects() {
   if (!primary) return null;
 
   return (
-    <section className="bg-off-white py-20 md:py-28" aria-labelledby="projects-heading">
-      <Container>
+    <section className="relative bg-off-white py-20 md:py-28" aria-labelledby="projects-heading">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-navy/[0.04] to-transparent"
+      />
+
+      <Container className="relative">
         <motion.div
           className="mb-10 flex flex-col gap-5 md:mb-12 md:flex-row md:items-end md:justify-between"
           initial={reduceMotion ? false : { opacity: 0, y: 20 }}
@@ -31,7 +36,14 @@ export function FeaturedProjects() {
             <h2 id="projects-heading" className="heading-section mt-3 text-navy">
               Projects shaped by real industrial constraints.
             </h2>
-            <p className="body-copy mt-4 text-steel-gray">
+            <motion.div
+              className="mt-5 h-px origin-left bg-gradient-to-r from-orange to-electric"
+              initial={reduceMotion ? false : { scaleX: 0, width: 64 }}
+              whileInView={{ scaleX: 1, width: 64 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.55, delay: 0.1, ease }}
+            />
+            <p className="body-copy mt-5 text-steel-gray">
               Structures ready for approved project details — published with clear preview labels
               until content is finalized.
             </p>
@@ -56,7 +68,7 @@ export function FeaturedProjects() {
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.5, ease }}
           >
-            <ProjectCard project={primary} featured className="min-h-[420px] md:min-h-[520px]" />
+            <ProjectCard project={primary} featured className="min-h-[420px] md:min-h-[540px]" />
           </motion.div>
           <div className="grid gap-4 lg:col-span-5">
             {secondary.map((project, index) => (
@@ -67,7 +79,7 @@ export function FeaturedProjects() {
                 viewport={{ once: true, amount: 0.25 }}
                 transition={{ duration: 0.45, delay: 0.1 + index * 0.08, ease }}
               >
-                <ProjectCard project={project} className="min-h-[250px] lg:min-h-[252px]" />
+                <ProjectCard project={project} className="min-h-[250px] lg:min-h-[262px]" />
               </motion.div>
             ))}
           </div>
